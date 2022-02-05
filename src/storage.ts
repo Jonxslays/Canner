@@ -19,6 +19,10 @@ export class StorageImpl {
         this.data.update(key, value);
     }
 
+    public delete(key: string) {
+        this.data.update(key, undefined);
+    }
+
     public getAll(): Array<string> {
         let buffer: Array<string> = [];
 

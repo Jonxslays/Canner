@@ -14,7 +14,11 @@ export function activate(ctx: vscode.ExtensionContext) {
         await executor.add(window);
     });
 
-    ctx.subscriptions.push(main, add);
+    let del = vscode.commands.registerCommand('vs-text-macros.cannedDelete', () => {
+        executor.delete(window);
+    });
+
+    ctx.subscriptions.push(main, add, del);
 }
 
 export function deactivate() {}

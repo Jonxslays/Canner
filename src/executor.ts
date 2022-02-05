@@ -10,17 +10,13 @@ export class Executor {
         this.data = new StorageImpl(meme);
     }
 
-    private async getUserInput(placeholder: string, prompt: string): Promise<string | undefined> {
+    public async getUserInput(placeholder: string, prompt: string): Promise<string | undefined> {
         const window = vscode.window;
 
         const buffer = await window.showInputBox({
             placeHolder: placeholder,
             prompt: prompt,
         });
-
-        if (buffer === undefined) {
-            return undefined;
-        }
 
         if (buffer === "") {
             window.showErrorMessage("You must enter a value.");
@@ -49,27 +45,45 @@ export class Executor {
         window.showInformationMessage(`Added/updated Can for '${name}'.`);
     }
 
-    public main(window: typeof vscode.window) {
+    public quickPickify(window: typeof vscode.window, callback: (s: string) => void) {
         const quickPick = window.createQuickPick();
-        const editor = window.activeTextEditor;
-
-        if (!editor) {
-            window.showInformationMessage("You must be using a text editor to use Canner.");
-            return;
-        }
 
         quickPick.items = this.getAll().map((item) => ({label: item}));
         quickPick.onDidChangeSelection(([selection]) => {
             if (selection) {
-                editor.edit((edit) => {
-                    edit.replace(editor.selection, this.get(selection.label));
-                });
-
+                callback(selection.label);
                 quickPick.dispose();
             }
         });
 
         quickPick.onDidHide(() => quickPick.dispose());
         quickPick.show();
+    }
+
+    public delete(window: typeof vscode.window) {
+        this.quickPickify(window, (selection) => {
+            this.data.delete(selection);
+            window.showInformationMessage(`Deleted '${selection}' from saved Cans.`);
+        });
+    }
+
+    public main(window: typeof vscode.window) {
+        const editor = window.activeTextEditor;
+
+        if (!editor) {
+            window.showInformationMessage("You must be using a text editor to use this command.");
+            return;
+        }
+
+        this.quickPickify(window, (selection) => {
+            editor.edit((edit) => {
+                edit.replace(editor.selection, this.get(selection));
+            });
+
+            vscode.commands.executeCommand("cursorMove", {
+                to: "wrappedLineEnd",
+                by: "wrappedLine",
+            });
+        });
     }
 }
