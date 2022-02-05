@@ -30,8 +30,8 @@ export class Executor {
         return this.data.get(name);
     }
 
-    public getAll() {
-        return this.data.getAll();
+    public getAllKeys() {
+        return this.data.getAllKeys();
     }
 
     public async add(window: typeof vscode.window) {
@@ -48,7 +48,7 @@ export class Executor {
     public quickPickify(window: typeof vscode.window, callback: (s: string) => void) {
         const quickPick = window.createQuickPick();
 
-        quickPick.items = this.getAll().map((item) => ({label: item}));
+        quickPick.items = this.getAllKeys().map((key) => ({label: key}));
         quickPick.onDidChangeSelection(([selection]) => {
             if (selection) {
                 callback(selection.label);

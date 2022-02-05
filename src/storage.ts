@@ -23,13 +23,7 @@ export class StorageImpl {
         this.data.update(key, undefined);
     }
 
-    public getAll(): Array<string> {
-        let buffer: Array<string> = [];
-
-        this.data.keys().forEach((item) => {
-            buffer.push(item);
-        });
-
-        return buffer;
+    public getAllKeys(): readonly string[] {
+        return this.data.keys();
     }
 }
