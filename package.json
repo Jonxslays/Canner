@@ -1,63 +1,80 @@
 {
   "name": "canner",
-	"displayName": "Canner",
-	"description": "A VSCode extension for creating reusable text blocks.",
-	"version": "0.1.0",
-	"engines": {
-		"vscode": "^1.5.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-        "onCommand:vs-text-macros.cannedMain",
-        "onCommand:vs-text-macros.cannedAdd",
-        "onCommand:vs-text-macros.cannedEdit",
-        "onCommand:vs-text-macros.cannedDelete"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "vs-text-macros.cannedMain",
-				"title": "Canner",
-				"category": "Canner"
-			},
-			{
-				"command": "vs-text-macros.cannedAdd",
-				"title": "Add a Can",
-				"category": "Canner"
-			},
-			{
-				"command": "vs-text-macros.cannedEdit",
-				"title": "Edit a Can",
-				"category": "Canner"
-			},
-			{
-				"command": "vs-text-macros.cannedDelete",
-				"title": "Delete a Can",
-				"category": "Canner"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.64.0",
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "14.x",
-		"@typescript-eslint/eslint-plugin": "^5.9.1",
-		"@typescript-eslint/parser": "^5.9.1",
-		"eslint": "^8.6.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.1.3",
-		"typescript": "^4.5.4",
-		"@vscode/test-electron": "^2.0.3"
-	}
+  "displayName": "Canner",
+  "description": "A VSCode extension for creating reusable text blocks.",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:canner.cannedMain",
+    "onCommand:canner.cannedAdd",
+    "onCommand:canner.cannedEdit",
+    "onCommand:canner.cannedDelete",
+    "onCommand:canner.refreshWebview"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "canner.cannedMain",
+        "title": "Get a Can",
+        "category": "Canner"
+      },
+      {
+        "command": "canner.cannedAdd",
+        "title": "Add a Can",
+        "category": "Canner"
+      },
+      {
+        "command": "canner.cannedEdit",
+        "title": "Edit a Can",
+        "category": "Canner"
+      },
+      {
+        "command": "canner.cannedDelete",
+        "title": "Delete a Can",
+        "category": "Canner"
+      },
+      {
+        "command": "canner.refreshWebview",
+        "title": "Refresh a webview",
+        "category": "Canner"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "concurrently \"rollup -c -w\" \"tsc -watch -p ./\"",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "@tsconfig/svelte": "^3.0.0",
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.64.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "@vscode/test-electron": "^2.0.3",
+    "concurrently": "^7.0.0",
+    "eslint": "^8.6.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.1.3",
+    "rollup": "^2.67.0",
+    "rollup-plugin-svelte": "^7.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": "^3.46.4",
+    "svelte-check": "^2.4.2",
+    "svelte-preprocess": "^4.10.2",
+    "typescript": "^4.5.4"
+  }
 }
