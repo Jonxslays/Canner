@@ -119,7 +119,7 @@ export class CannerPanel {
     private _getHtmlForWebview(webview: vscode.Webview) {
         // Loads javascript into webview
         const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "out/compiled", "home.js")
+            vscode.Uri.joinPath(this._extensionUri, "out/compiled", "test.js")
         );
 
         // Loads styles into webview
@@ -131,9 +131,9 @@ export class CannerPanel {
             vscode.Uri.joinPath(this._extensionUri, "frontend", "vscode.css")
         );
 
-        // const cssUri = webview.asWebviewUri(
-        //     vscode.Uri.joinPath(this._extensionUri, "out/compiled", "home.css")
-        // );
+        const cssUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, "out/compiled", "home.css")
+        );
 
         // Use a nonce for security
         const nonce = generateNonce();
@@ -150,10 +150,6 @@ export class CannerPanel {
 
             <link href="${stylesResetUri}" rel="stylesheet">
             <link href="${stylesMainUri}" rel="stylesheet">
-
-            <script nonce="${nonce}">
-
-            </script>
             </head>
 
             <body>

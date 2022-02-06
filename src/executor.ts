@@ -75,12 +75,12 @@ export class Executor {
             return;
         }
 
-        this.quickPickify(window, (selection) => {
+        this.quickPickify(window, async (selection) => {
             editor.edit((edit) => {
                 edit.replace(editor.selection, this.get(selection));
             });
 
-            vscode.commands.executeCommand("cursorMove", {
+            await vscode.commands.executeCommand("cursorMove", {
                 to: "wrappedLineEnd",
                 by: "wrappedLine",
             });
