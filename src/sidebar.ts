@@ -46,7 +46,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 case "add-can": {
 
                     // This can exists, should we edit it?
-                    if (this.executor.getAllKeys().includes(data.name)) {
+                    if (this.executor.keys().includes(data.name)) {
                         const edit = await vscode.window.showErrorMessage(
                             `${data.name} exists. Edit it instead?`,
                             "Yes",
@@ -83,7 +83,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 case "edit-can": {
 
                     // This can doesn't exist, should we create it?
-                    if (!this.executor.getAllKeys().includes(data.name)) {
+                    if (!this.executor.keys().includes(data.name)) {
                         const create = await vscode.window.showErrorMessage(
                             `${data.name} doesn't exist. Create it now?`,
                             "Yes",
@@ -121,7 +121,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 case "del-can": {
 
                     // This can doesn't exist, we can't delete it.
-                    if (!this.executor.getAllKeys().includes(data.value)) {
+                    if (!this.executor.keys().includes(data.value)) {
                         vscode.window.showErrorMessage(
                             `${data.value} can't be deleted, it doesn't exist.`
                         );
@@ -144,7 +144,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 case "get-can-names": {
                     webviewView.webview.postMessage({
                         type: "all-cans",
-                        value: this.executor.getAllKeys(),
+                        value: this.executor.keys(),
                     });
 
                     break;

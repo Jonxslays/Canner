@@ -1,53 +1,44 @@
 import * as vscode from 'vscode';
-import { StorageImpl } from './storage';
 
 
+// Main executor of the backend, handles svelte requests.
 export class Executor {
 
-    private data: StorageImpl;
+    constructor(private data: vscode.Memento) {}
 
-    constructor(meme: vscode.Memento) {
-        this.data = new StorageImpl(meme);
-    }
+    // Gets a key from the global state.
+    public get(key: string): string {
+        let obj: string | undefined = this.data.get(key);
 
-    public async getUserInput(placeholder: string, prompt: string): Promise<string | undefined> {
-        const window = vscode.window;
-
-        const buffer = await window.showInputBox({
-            placeHolder: placeholder,
-            prompt: prompt,
-        });
-
-        if (buffer === "") {
-            window.showErrorMessage("You must enter a value.");
-            return undefined;
+        if (obj === undefined) {
+            throw new Error(`Failed to get ${key} from storage.`);
         }
 
-        return buffer;
+        return obj;
     }
 
-    public get(name: string): string {
-        return this.data.get(name);
+    // Gets all the keys in the global state.
+    public keys(): readonly string[] {
+        return this.data.keys();
     }
 
-    public getAllKeys(): readonly string[] {
-        return this.data.getAllKeys();
+    // Adds a key to the global state.
+    public add(key: string, value: string) {
+        this.data.update(key, value);
+        vscode.window.showInformationMessage(`Added Can for '${key}'.`);
     }
 
-    public add(name: string, value: string) {
-        this.data.set(name, value);
-        vscode.window.showInformationMessage(`Added Can for '${name}'.`);
+    // Edits a key in the global state.
+    public edit(key: string, value: string) {
+        this.data.update(key, value);
+        vscode.window.showInformationMessage(`Updated Can '${key}'.`);
     }
 
-    public edit(name: string, value: string) {
-        this.data.set(name, value);
-        vscode.window.showInformationMessage(`Updated Can '${name}'.`);
-    }
-
+    // Creates a quick pick menu for easy access to cans.
     public quickPickify(window: typeof vscode.window, callback: (s: string) => void) {
         const quickPick = window.createQuickPick();
 
-        quickPick.items = this.getAllKeys().map((key) => ({label: key}));
+        quickPick.items = this.keys().map((key) => ({label: key}));
         quickPick.onDidChangeSelection(([selection]) => {
             if (selection) {
                 callback(selection.label);
@@ -59,24 +50,30 @@ export class Executor {
         quickPick.show();
     }
 
-    public delete(name: string) {
-        this.data.delete(name);
-        vscode.window.showInformationMessage(`Deleted '${name}' from saved Cans.`);
+    // Deletes a key from the global state.
+    public delete(key: string) {
+        this.data.update(key, undefined);
+        vscode.window.showInformationMessage(`Deleted '${key}' from saved Cans.`);
     }
 
+    // Executes a text insertion using a quick pick menu.
     public main(window: typeof vscode.window) {
         const editor = window.activeTextEditor;
 
+        // We cant replace text if they aren't using an editor.
         if (!editor) {
             window.showInformationMessage("You must be using a text editor to use this command.");
             return;
         }
 
+        // Start the quick pick menu.
         this.quickPickify(window, async (selection) => {
+            // Insert the value for the selection, gotten from global state.
             editor.edit((edit) => {
                 edit.replace(editor.selection, this.get(selection));
             });
 
+            // Prevents all the text from being highlighted afterwards.
             await vscode.commands.executeCommand("cursorMove", {
                 to: "wrappedLineEnd",
                 by: "wrappedLine",
