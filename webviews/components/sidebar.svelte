@@ -7,6 +7,7 @@
     let state = "";
     let hideIndicator = true;
     let hideAllCans = true;
+    let hideForDelete = false;
     let allCans: string[] = [];
 
     function getAllCans() {
@@ -23,11 +24,31 @@
             switch (message.type) {
                 case "add-can": {
                     getAllCans();
-                    hideIndicator = true;
 
+                    hideIndicator = true;
                     topTextInput = "";
                     formInput = "";
                     state = "";
+                    break;
+                }
+
+                case "edit-can": {
+                    hideIndicator = true;
+                    topTextInput = "";
+                    formInput = "";
+                    state = "";
+                    break;
+                }
+
+                case "del-can": {
+                    getAllCans();
+
+                    hideForDelete = false;
+                    hideIndicator = true;
+                    topTextInput = "";
+                    formInput = "";
+                    state = "";
+                    break;
                 }
 
                 case "all-cans": {
@@ -74,7 +95,7 @@
         color: green;
     }
 
-    .hideIndicator, .hideAllCans {
+    .hideIndicator, .hideAllCans, .hideForDelete {
         display: none;
     }
 
@@ -139,11 +160,6 @@
 <button on:click={() => {
     state = "Edit a can";
     hideAllCans = true;
-    svscode.postMessage({
-        type: "edit-can",
-        value: topTextInput,
-    });
-
     hideIndicator = false;
 }}>Edit a Can</button>
 
@@ -151,10 +167,8 @@
 <button on:click={() => {
     state = "Delete a can";
     hideAllCans = true;
-    svscode.postMessage({
-        type: "del-can",
-        value: topTextInput,
-    });
+    hideIndicator = false;
+    hideForDelete = true;
 }}>Delete a Can</button>
 
 <button on:click={() => {
@@ -165,12 +179,22 @@
 <br>
 
 <!-- svelte-ignore missing-declaration -->
-<form id="main-form" class:hideIndicator={hideIndicator} on:submit|preventDefault={async (event) => {
-    if (!topTextInput || !formInput) {
+<form id="main-form" class:hideIndicator={hideIndicator} on:submit|preventDefault={async () => {
+    if (!topTextInput) {
         svscode.postMessage({
             type: "onError",
-            value: "You must enter a name, and text for the new can."
+            value: "You must enter a name.",
         });
+
+        return;
+    }
+
+    if (!hideForDelete && !formInput) {
+        svscode.postMessage({
+            type: "onError",
+            value: "You must enter text for the can.",
+        });
+
         return;
     }
 
@@ -184,15 +208,38 @@
 
             break;
         }
+
+        case "Edit a can": {
+            svscode.postMessage({
+                type: "edit-can",
+                value: formInput,
+                name: topTextInput,
+            });
+
+            break;
+        }
+
+        case "Delete a can": {
+            svscode.postMessage({
+                type: "del-can",
+                value: topTextInput,
+            });
+
+            break;
+        }
     }
 }}>
     <br>
     <h2 class="state" >{state}...</h2>
     <input bind:value={topTextInput} placeholder="Can name..." />
-    <textarea bind:value={formInput} placeholder="Text for this can..." />
+    <textarea
+        bind:value={formInput}
+        class:hideForDelete={hideForDelete}
+        placeholder="Text for this can..."
+    />
 </form>
 
-<div class="buttonz" >
+<div class="buttonz">
     <button class:hideIndicator={hideIndicator} class="cancel-button" on:click={() => {
         hideIndicator = true;
         state = "";
@@ -200,7 +247,12 @@
         formInput = "";
     }}>Cancel</button>
 
-    <button class:hideIndicator={hideIndicator} class="submit-button" type="submit" form="main-form">Submit</button>
+    <button
+        class:hideIndicator={hideIndicator}
+        class="submit-button"
+        type="submit"
+        form="main-form"
+    >Submit</button>
 </div>
 
 <br>

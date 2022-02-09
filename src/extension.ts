@@ -17,10 +17,6 @@ export function activate(ctx: vscode.ExtensionContext) {
         executor.main(window);
     });
 
-    let del = vscode.commands.registerCommand('canner.cannedDelete', () => {
-        executor.delete(window);
-    });
-
     let test = vscode.commands.registerCommand('canner.testView', () => {
         CannerPanel.createOrShow(ctx.extensionUri);
     });
@@ -32,7 +28,7 @@ export function activate(ctx: vscode.ExtensionContext) {
         await vscode.commands.executeCommand("workbench.view.extension.canner-sidebar-view");
     });
 
-    ctx.subscriptions.push(sidebar, main, del, test, refresh);
+    ctx.subscriptions.push(sidebar, main, test, refresh);
 }
 
 export function deactivate() {}

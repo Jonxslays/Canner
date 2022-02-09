@@ -39,6 +39,11 @@ export class Executor {
         vscode.window.showInformationMessage(`Added Can for '${name}'.`);
     }
 
+    public edit(name: string, value: string) {
+        this.data.set(name, value);
+        vscode.window.showInformationMessage(`Updated Can '${name}'.`);
+    }
+
     public quickPickify(window: typeof vscode.window, callback: (s: string) => void) {
         const quickPick = window.createQuickPick();
 
@@ -54,11 +59,9 @@ export class Executor {
         quickPick.show();
     }
 
-    public delete(window: typeof vscode.window) {
-        this.quickPickify(window, (selection) => {
-            this.data.delete(selection);
-            window.showInformationMessage(`Deleted '${selection}' from saved Cans.`);
-        });
+    public delete(name: string) {
+        this.data.delete(name);
+        vscode.window.showInformationMessage(`Deleted '${name}' from saved Cans.`);
     }
 
     public main(window: typeof vscode.window) {

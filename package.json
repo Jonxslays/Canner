@@ -43,22 +43,7 @@
     "commands": [
       {
         "command": "canner.cannedMain",
-        "title": "Get a Can",
-        "category": "Canner"
-      },
-      {
-        "command": "canner.cannedAdd",
-        "title": "Add a Can",
-        "category": "Canner"
-      },
-      {
-        "command": "canner.cannedEdit",
-        "title": "Edit a Can",
-        "category": "Canner"
-      },
-      {
-        "command": "canner.cannedDelete",
-        "title": "Delete a Can",
+        "title": "Canner",
         "category": "Canner"
       },
       {
