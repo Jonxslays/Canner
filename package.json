@@ -11,12 +11,7 @@
   ],
   "activationEvents": [
     "onView:canner-sidebar",
-    "onCommand:canner.cannedMain",
-    "onCommand:canner.cannedAdd",
-    "onCommand:canner.cannedEdit",
-    "onCommand:canner.cannedDelete",
-    "onCommand:canner.refreshWebview",
-    "onCommand:canner.testView"
+    "onCommand:canner.cannedMain"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -44,16 +39,6 @@
       {
         "command": "canner.cannedMain",
         "title": "Canner",
-        "category": "Canner"
-      },
-      {
-        "command": "canner.refreshWebview",
-        "title": "Refresh a webview",
-        "category": "Canner"
-      },
-      {
-        "command": "canner.testView",
-        "title": "Test basic tab webview",
         "category": "Canner"
       }
     ]
