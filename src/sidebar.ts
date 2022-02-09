@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { Executor } from "./executor";
 import { generateNonce } from "./nonce";
 
 
@@ -6,7 +7,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     _view?: vscode.WebviewView;
     _doc?: vscode.TextDocument;
 
-    constructor(private readonly _extensionUri: vscode.Uri) {}
+    constructor(private readonly _extensionUri: vscode.Uri, private executor: Executor) {}
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
@@ -33,6 +34,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                         return;
                     }
                     vscode.window.showErrorMessage(data.value);
+                    break;
+                }
+                case "add-can": {
+                    if (!data.value) {
+                        return;
+                    }
+
+                    vscode.window.showInformationMessage(data.value);
+                    break;
+                }
+                case "get-can-names": {
+                    webviewView.webview.postMessage({
+                        type: "get-all-cans",
+                        value: this.executor.getAllKeys(),
+                    });
                     break;
                 }
             }
@@ -77,6 +93,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <link href="${styleResetUri}" rel="stylesheet">
         <link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
+
+        <script nonce="${nonce}">
+            const svscode = acquireVsCodeApi();
+        </script>
 		</head>
 
         <body>

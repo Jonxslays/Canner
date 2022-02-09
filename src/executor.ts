@@ -30,7 +30,7 @@ export class Executor {
         return this.data.get(name);
     }
 
-    public getAllKeys() {
+    public getAllKeys(): readonly string[] {
         return this.data.getAllKeys();
     }
 

@@ -7,7 +7,7 @@ import { SidebarProvider } from './sidebar';
 export function activate(ctx: vscode.ExtensionContext) {
     const window = vscode.window;
     const executor = new Executor(ctx.globalState);
-    const sidebarProvider = new SidebarProvider(ctx.extensionUri);
+    const sidebarProvider = new SidebarProvider(ctx.extensionUri, executor);
 
     let sidebar = vscode.window.registerWebviewViewProvider(
         "canner-sidebar", sidebarProvider
@@ -15,10 +15,6 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     let main = vscode.commands.registerCommand('canner.cannedMain', () => {
         executor.main(window);
-    });
-
-    let add = vscode.commands.registerCommand('canner.cannedAdd', async () => {
-        await executor.add(window);
     });
 
     let del = vscode.commands.registerCommand('canner.cannedDelete', () => {
@@ -36,7 +32,7 @@ export function activate(ctx: vscode.ExtensionContext) {
         await vscode.commands.executeCommand("workbench.view.extension.canner-sidebar-view");
     });
 
-    ctx.subscriptions.push(sidebar, main, add, del, test, refresh);
+    ctx.subscriptions.push(sidebar, main, del, test, refresh);
 }
 
 export function deactivate() {}
