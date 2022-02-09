@@ -29,6 +29,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                     vscode.window.showInformationMessage(data.value);
                     break;
                 }
+
                 case "onError": {
                     if (!data.value) {
                         return;
@@ -36,17 +37,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                     vscode.window.showErrorMessage(data.value);
                     break;
                 }
+
                 case "add-can": {
-                    if (!data.value) {
+                    if (!data.name) {
+                        vscode.window.showErrorMessage("Cannot create a Can with no name.");
                         return;
                     }
 
-                    vscode.window.showInformationMessage(data.value);
+                    if (this.executor.getAllKeys().includes(data.name)) {
+                        vscode.window.showErrorMessage(
+                            `${data.name} is already defined. Try editing it instead.`
+                        );
+                        return;
+                    }
+
+                    this.executor.add(data.name, data.value);
+                    webviewView.webview.postMessage({
+                        type: "add-can",
+                        value: data.name,
+                    });
+
                     break;
                 }
+
                 case "get-can-names": {
                     webviewView.webview.postMessage({
-                        type: "get-all-cans",
+                        type: "all-cans",
                         value: this.executor.getAllKeys(),
                     });
                     break;

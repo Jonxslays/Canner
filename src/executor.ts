@@ -34,15 +34,9 @@ export class Executor {
         return this.data.getAllKeys();
     }
 
-    public async add(window: typeof vscode.window) {
-        const name = await this.getUserInput("Name", "Enter a name for the new Can.");
-        if (!name) { return; }
-
-        const value = await this.getUserInput("Text", "Enter the text block for this Can.");
-        if (!value) { return; }
-
+    public add(name: string, value: string) {
         this.data.set(name, value);
-        window.showInformationMessage(`Added/updated Can for '${name}'.`);
+        vscode.window.showInformationMessage(`Added Can for '${name}'.`);
     }
 
     public quickPickify(window: typeof vscode.window, callback: (s: string) => void) {

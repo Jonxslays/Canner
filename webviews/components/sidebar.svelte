@@ -4,45 +4,49 @@
 
     let topTextInput = "";
     let formInput = "";
-    let resultIndicator = "";
     let state = "";
     let hideIndicator = true;
-    let isSuccess = false;
-    let isFailure = false;
-    let allCans: Array<string> = [];
+    let allCans: string[] = [];
+
+    function getAllCans() {
+        svscode.postMessage({
+            type: "get-can-names",
+            value: "",
+        });
+    }
 
     onMount(async () => {
         window.addEventListener("message", async (event) => {
             const message: {type: string, value: any} = event.data;
+
             switch (message.type) {
                 case "add-can": {
-                    break;
+                    getAllCans();
+                    hideIndicator = true;
+
+                    topTextInput = "";
+                    formInput = "";
+                    state = "";
                 }
 
-                case "get-all-cans": {
+                case "all-cans": {
                     if (!message.value) {
-                        console.log("No value for all cans")
                         return;
                     }
 
                     allCans = message.value;
-                    console.log({allCans});
                     break;
                 }
             }
         });
 
-        console.log("getting all names")
-        svscode.postMessage({
-            type: "get-can-names",
-            value: "",
-        });
+        getAllCans();
     });
 
 </script>
 
 <style>
-    h2 {
+    h2, .state {
         text-align: center;
     }
 
@@ -64,88 +68,137 @@
         color: green;
     }
 
-    .indicator {
-        font-weight: bold;
-        text-align: center;
-        border-radius: 4px;
-        border-width: 1px;
-        border-color: white;
-    }
-
     .hideIndicator {
         display: none;
     }
 
-    .success {
-        color: green;
+    .can-list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: stretch;
     }
 
-    .failure {
-        color: red;
+    .can-list-item {
+        list-style: none;
+        size: 16px;
+        padding: 5px 0px;;
+        border: 1px solid rgb(59, 69, 82);
+        border-radius: 2px;
+        width: 100%;
+        margin-left: -.75rem;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
+
+    .buttonz {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .scrollable {
+        height: 50%;
+        overflow-y: auto;
+    }
+
+    .cancel-button, .submit-button {
+        font-weight: bold;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        width: 50%;
+    }
+
+    .cancel-button {
+        color:rgb(233, 95, 95);
+        margin-right: 3px;
+    }
+
+    .submit-button {
+        color:rgb(122, 231, 118);
+        margin-left: 3px;
+    }
+
 </style>
+
 
 <h2>Welcome to Canner <span class="smiley">:)</span></h2>
 <br>
 
-<input bind:value={topTextInput} placeholder="Name..."/>
 <!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
-    state = "add-can";
+    state = "Add a can";
+    hideIndicator = false;
+}}>Add a Can</button>
+
+<!-- svelte-ignore missing-declaration -->
+<button on:click={() => {
+    state = "Edit a can";
     svscode.postMessage({
-        type: state,
-        value: topTextInput || undefined,
+        type: "edit-can",
+        value: topTextInput,
     });
 
     hideIndicator = false;
-    resultIndicator = "hello";
-}}>Add a new Can</button>
-
-<!-- svelte-ignore missing-declaration -->
-<button on:click={() => {
-    state = "edit-can";
-    svscode.postMessage({
-        type: state,
-        value: topTextInput || undefined,
-    });
 }}>Edit a Can</button>
 
 <!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
-    state = "del-can";
+    state = "Delete a can";
     svscode.postMessage({
-        type: state,
-        value: topTextInput || undefined,
+        type: "del-can",
+        value: topTextInput,
     });
 }}>Delete a Can</button>
 
-<br><br>
+<br>
 
-<form on:submit|preventDefault={async () => {
+<!-- svelte-ignore missing-declaration -->
+<form id="main-form" class:hideIndicator={hideIndicator} on:submit|preventDefault={async (event) => {
+    if (!topTextInput || !formInput) {
+        svscode.postMessage({
+            type: "onError",
+            value: "You must enter a name, and text for the new can."
+        });
+        return;
+    }
 
+    switch (state) {
+        case "Add a can": {
+            svscode.postMessage({
+                type: "add-can",
+                value: formInput,
+                name: topTextInput,
+            });
+
+            break;
+        }
+    }
 }}>
-    <textarea class:hideIndicator={hideIndicator} bind:value={formInput} />
+    <br>
+    <h2 class="state" >{state}...</h2>
+    <input bind:value={topTextInput} placeholder="Can name..." />
+    <textarea bind:value={formInput} placeholder="Text for this can..." />
 </form>
 
-<button class:hideIndicator={hideIndicator} on:click={() => {
-    hideIndicator = true;
-    state = "";
-}}>Cancel</button>
+<div class="buttonz" >
+    <button class:hideIndicator={hideIndicator} class="cancel-button" on:click={() => {
+        hideIndicator = true;
+        state = "";
+        topTextInput = "";
+        formInput = "";
+    }}>Cancel</button>
 
-<br><br>
-
-<div class="indicator">
-    <h3
-        class:failure={isFailure}
-        class:success={isSuccess}
-        class:hideIndicator={hideIndicator}
-    >
-        {resultIndicator}
-    </h3>
+    <button class:hideIndicator={hideIndicator} class="submit-button" type="submit" form="main-form">Submit</button>
 </div>
 
-<ul>
-    {#each allCans as can (can)}
-        <li>{can}</li>
-    {/each}
-</ul>
+<br>
+<div class="scrollable">
+    <div class="current-cans">
+        <h2>Current Cans</h2>
+        <ul class="can-list">
+            {#each allCans as can}
+                <li class="can-list-item">{can}</li>
+            {/each}
+        </ul>
+    </div>
+</div>

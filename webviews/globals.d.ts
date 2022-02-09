@@ -4,7 +4,9 @@ import { Executor } from "../src/executor";
 declare global {
     const svscode: {
         postMessage: ({
-            type: string, value: any, success: boolean = undefined,
+            type: string,
+            value: string,
+            name: string = "",
         }) => void;
     };
 
