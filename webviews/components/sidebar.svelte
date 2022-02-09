@@ -17,6 +17,13 @@
         });
     }
 
+    function resetState() {
+        hideIndicator = true;
+        topTextInput = "";
+        formInput = "";
+        state = "";
+    }
+
     onMount(async () => {
         window.addEventListener("message", async (event) => {
             const message: {type: string, value: any} = event.data;
@@ -24,30 +31,18 @@
             switch (message.type) {
                 case "add-can": {
                     getAllCans();
-
-                    hideIndicator = true;
-                    topTextInput = "";
-                    formInput = "";
-                    state = "";
+                    resetState();
                     break;
                 }
 
                 case "edit-can": {
-                    hideIndicator = true;
-                    topTextInput = "";
-                    formInput = "";
-                    state = "";
+                    resetState();
                     break;
                 }
 
                 case "del-can": {
                     getAllCans();
-
-                    hideForDelete = false;
-                    hideIndicator = true;
-                    topTextInput = "";
-                    formInput = "";
-                    state = "";
+                    resetState();
                     break;
                 }
 
@@ -149,21 +144,20 @@
 <h2>Welcome to Canner <span class="smiley">:)</span></h2>
 <br>
 
-<!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
     state = "Add a can";
     hideAllCans = true;
+    hideForDelete = false;
     hideIndicator = false;
 }}>Add a Can</button>
 
-<!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
     state = "Edit a can";
     hideAllCans = true;
+    hideForDelete = false;
     hideIndicator = false;
 }}>Edit a Can</button>
 
-<!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
     state = "Delete a can";
     hideAllCans = true;
@@ -174,6 +168,7 @@
 <button on:click={() => {
     hideIndicator = true;
     hideAllCans = false;
+    hideForDelete = false;
 }}>List all Cans</button>
 
 <br>
@@ -241,10 +236,7 @@
 
 <div class="buttonz">
     <button class:hideIndicator={hideIndicator} class="cancel-button" on:click={() => {
-        hideIndicator = true;
-        state = "";
-        topTextInput = "";
-        formInput = "";
+        resetState();
     }}>Cancel</button>
 
     <button
@@ -258,11 +250,10 @@
 <br>
 <div class="current-cans" class:hideAllCans={hideAllCans}>
     <h2>Current Cans</h2>
+    <button class="buttonz" id="close-button" on:click={() => { hideAllCans = true; }}>Close</button>
     <ul class="can-list">
         {#each allCans as can}
             <li class="can-list-item">{can}</li>
         {/each}
     </ul>
-
-    <button class="buttonz" id="close-button" on:click={() => { hideAllCans = true; }}>Close</button>
 </div>
