@@ -6,6 +6,7 @@
     let formInput = "";
     let state = "";
     let hideIndicator = true;
+    let hideAllCans = true;
     let allCans: string[] = [];
 
     function getAllCans() {
@@ -46,6 +47,7 @@
 </script>
 
 <style>
+
     h2, .state {
         text-align: center;
     }
@@ -60,6 +62,10 @@
         height: 200px;
     }
 
+    button {
+        font-weight: bold;
+    }
+
     ::placeholder {
         color: rgb(168, 168, 168);
     }
@@ -68,26 +74,25 @@
         color: green;
     }
 
-    .hideIndicator {
+    .hideIndicator, .hideAllCans {
         display: none;
     }
 
     .can-list {
-        display: flex;
-        flex-direction: column;
         width: 100%;
+        height: 100%;
         justify-content: stretch;
+        overflow-y: auto ;
     }
 
     .can-list-item {
         list-style: none;
         size: 16px;
-        padding: 5px 0px;;
+        margin: 5px 0px;;
         border: 1px solid rgb(59, 69, 82);
-        border-radius: 2px;
+        border-radius: 4px;
         width: 100%;
-        margin-left: -.75rem;
-        overflow-y: auto;
+        margin-left: -.75rem !important;
         overflow-x: hidden;
     }
 
@@ -96,13 +101,7 @@
         flex-direction: row;
     }
 
-    .scrollable {
-        height: 50%;
-        overflow-y: auto;
-    }
-
     .cancel-button, .submit-button {
-        font-weight: bold;
         margin-top: 3px;
         margin-bottom: 3px;
         width: 50%;
@@ -118,8 +117,13 @@
         margin-left: 3px;
     }
 
-</style>
+    #close-button {
+        display: inline-block;
+        text-align: center;
+        color:rgb(233, 95, 95);
+    }
 
+</style>
 
 <h2>Welcome to Canner <span class="smiley">:)</span></h2>
 <br>
@@ -127,12 +131,14 @@
 <!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
     state = "Add a can";
+    hideAllCans = true;
     hideIndicator = false;
 }}>Add a Can</button>
 
 <!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
     state = "Edit a can";
+    hideAllCans = true;
     svscode.postMessage({
         type: "edit-can",
         value: topTextInput,
@@ -144,11 +150,17 @@
 <!-- svelte-ignore missing-declaration -->
 <button on:click={() => {
     state = "Delete a can";
+    hideAllCans = true;
     svscode.postMessage({
         type: "del-can",
         value: topTextInput,
     });
 }}>Delete a Can</button>
+
+<button on:click={() => {
+    hideIndicator = true;
+    hideAllCans = false;
+}}>List all Cans</button>
 
 <br>
 
@@ -192,13 +204,13 @@
 </div>
 
 <br>
-<div class="scrollable">
-    <div class="current-cans">
-        <h2>Current Cans</h2>
-        <ul class="can-list">
-            {#each allCans as can}
-                <li class="can-list-item">{can}</li>
-            {/each}
-        </ul>
-    </div>
+<div class="current-cans" class:hideAllCans={hideAllCans}>
+    <h2>Current Cans</h2>
+    <ul class="can-list">
+        {#each allCans as can}
+            <li class="can-list-item">{can}</li>
+        {/each}
+    </ul>
+
+    <button class="buttonz" id="close-button" on:click={() => { hideAllCans = true; }}>Close</button>
 </div>
