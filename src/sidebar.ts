@@ -47,7 +47,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
                     // This can exists, should we edit it?
                     if (this.executor.keys().includes(data.name)) {
-                        const edit = await vscode.window.showErrorMessage(
+                        const edit = await vscode.window.showWarningMessage(
                             `${data.name} exists. Edit it instead?`,
                             "Yes",
                             "No",
@@ -84,7 +84,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
                     // This can doesn't exist, should we create it?
                     if (!this.executor.keys().includes(data.name)) {
-                        const create = await vscode.window.showErrorMessage(
+                        const create = await vscode.window.showWarningMessage(
                             `${data.name} doesn't exist. Create it now?`,
                             "Yes",
                             "No",
@@ -122,7 +122,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
                     // This can doesn't exist, we can't delete it.
                     if (!this.executor.keys().includes(data.value)) {
-                        vscode.window.showErrorMessage(
+                        vscode.window.showWarningMessage(
                             `${data.value} can't be deleted, it doesn't exist.`
                         );
 
