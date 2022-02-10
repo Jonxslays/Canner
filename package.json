@@ -17,7 +17,8 @@
   ],
   "activationEvents": [
     "onView:canner-sidebar",
-    "onCommand:canner.cannedMain"
+    "onCommand:canner.cannedMain",
+    "onCommand:canner.cannedImport"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -45,6 +46,11 @@
       {
         "command": "canner.cannedMain",
         "title": "Canner",
+        "category": "Canner"
+      },
+      {
+        "command": "canner.cannedImport",
+        "title": "import",
         "category": "Canner"
       }
     ]
